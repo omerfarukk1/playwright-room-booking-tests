@@ -1,6 +1,32 @@
 # Room Booking Automation Tests
 
-This project contains automated UI tests for the room booking functionality on the [Automation in Testing](https://automationintesting.online/) website using Playwright with TypeScript.
+This project contains automated UI tests for the room booking functionality on the [Automation in Testing](https://aut## 🏗️ Project Structure
+
+```
+typescript/
+├── package.json                 # Project dependencies and scripts
+├── playwright.config.ts        # Playwright configuration
+├── tsconfig.json              # TypeScript configuration
+├── index.ts                   # Main exports for easy imports
+├── pages/                     # Page Object Model classes
+│   ├── HomePage.ts           # Homepage interactions
+│   ├── RoomsPage.ts          # Room selection page
+│   ├── ReservationPage.ts    # Reservation and pricing page
+│   ├── BookingFormPage.ts    # Booking form interactions
+│   └── ConfirmationPage.ts   # Confirmation/error handling
+├── helpers/                   # Reusable test helpers
+│   └── BookingFlowHelper.ts  # Common booking flow actions
+├── data/                     # Test data management
+│   └── TestData.ts          # Centralized test data constants
+├── fixtures/                 # Test fixtures and setup
+│   └── test-fixtures.ts     # Page object fixtures
+├── tests/                    # Test files
+│   ├── room-booking.spec.ts          # Original tests
+│   └── room-booking-refactored.spec.ts # Best practices implementation
+├── test-results/             # Test execution artifacts
+├── playwright-report/        # HTML test reports
+└── README.md                 # This file
+```ng.online/) website using Playwright with TypeScript. The project follows modern testing best practices including Page Object Model (POM), DRY principles, and AAA (Arrange-Act-Assert) pattern.
 
 ## Project Overview
 
@@ -9,6 +35,23 @@ The test suite covers the complete room booking workflow including:
 - Date selection and price validation
 - Form submission and validation
 - Error handling scenarios
+
+## 🏗️ Architecture & Best Practices
+
+### **Page Object Model (POM)**
+- **Separation of Concerns**: UI elements and actions are encapsulated in page classes
+- **Maintainability**: Changes to UI require updates only in page objects
+- **Reusability**: Page objects can be shared across multiple tests
+
+### **DRY (Don't Repeat Yourself) Principles**
+- **Test Data Management**: Centralized test data in `TestData.ts`
+- **Common Flows**: Reusable helper classes for repeated actions
+- **Validation Messages**: Constants for expected error messages
+
+### **AAA (Arrange-Act-Assert) Pattern**
+- **Arrange**: Set up test data and initialize objects
+- **Act**: Perform the actual test actions
+- **Assert**: Verify expected outcomes
 
 ##  Technologies Used
 
@@ -51,16 +94,22 @@ npx playwright test
 npx playwright test --headed
 ```
 
-#### Run tests for specific browser:
+#### Run refactored tests (Best Practices Implementation):
 ```bash
-# Chromium only
-npx playwright test --project=chromium
+# Run all refactored tests
+npx playwright test room-booking-refactored.spec.ts
 
-# Firefox only
-npx playwright test --project=firefox
+# Run specific test group
+npx playwright test room-booking-refactored.spec.ts --grep "Room Booking Tests"
+npx playwright test room-booking-refactored.spec.ts --grep "Price Validation Tests"
 
-# WebKit (Safari) only
-npx playwright test --project=webkit
+# Run with specific browser
+npx playwright test room-booking-refactored.spec.ts --project=chromium --headed
+```
+
+#### Run original tests:
+```bash
+npx playwright test room-booking.spec.ts
 ```
 
 #### Run specific test:
@@ -81,7 +130,36 @@ After running tests, view the HTML report:
 npx playwright show-report
 ```
 
-## Test Cases
+## 📝 Test Cases
+
+### **Refactored Tests (Best Practices Implementation)**
+
+#### 1. Complete Room Booking Flow - End to End Test
+**Architecture**: Uses Page Object Model with AAA pattern
+**Purpose**: Complete end-to-end room booking workflow with validation
+
+**Steps**:
+1. **Arrange**: Initialize page objects and test data
+2. **Act**: Navigate through booking flow, test validation, submit form
+3. **Assert**: Verify validation messages and final outcomes
+
+#### 2. Email Field Validation - Empty Email Test  
+**Architecture**: Uses helper classes and centralized test data
+**Purpose**: Validate email field using reusable components
+
+#### 3. All Fields Empty Validation - Comprehensive Form Validation
+**Architecture**: Implements DRY principles with screenshot utilities
+**Purpose**: Test all field validations with visual documentation
+
+#### 4. Firstname Validation - Single Field Test
+**Architecture**: Demonstrates modular validation testing
+**Purpose**: Isolated testing of firstname field validation
+
+#### 5. Price Calculation Verification
+**Architecture**: Separated price logic into dedicated test group
+**Purpose**: Verify pricing calculations independently
+
+### **Original Tests (Legacy Implementation)**
 
 ### 1. Room Booking Scenario - Automation in Testing
 **Purpose**: Complete end-to-end room booking workflow
@@ -196,4 +274,65 @@ Tests will show one of these outcomes:
 2. Add appropriate wait conditions for dynamic content
 3. Include descriptive test names and comments
 4. Test across all supported browsers before submitting
+
+## 🎯 **Best Practices Improvements**
+
+### **Before vs After Comparison**
+
+#### **🔴 Original Implementation Issues**
+- **No Page Object Model**: UI elements scattered throughout tests
+- **Code Duplication**: Repeated navigation and setup code
+- **Hard-coded Values**: Test data mixed with test logic  
+- **Poor Maintainability**: UI changes require multiple test updates
+- **Unclear Test Structure**: Missing AAA pattern organization
+
+#### **✅ Refactored Implementation Benefits**
+- **Page Object Model**: Centralized UI element management
+- **DRY Principles**: Reusable helper classes and common flows
+- **Centralized Test Data**: Easy maintenance and updates
+- **Clear Architecture**: Separated concerns and modular design
+- **AAA Pattern**: Well-organized test structure
+- **Type Safety**: Full TypeScript implementation with interfaces
+
+### **Key Improvements**
+
+#### **1. Page Object Model Implementation**
+```typescript
+// Before: Direct page interactions in tests
+await page.getByRole('link', { name: /book now/i }).first().click();
+
+// After: Encapsulated in page objects
+await homePage.clickHeroBookNow();
+```
+
+#### **2. DRY Principles Application**
+```typescript
+// Before: Repeated navigation code in each test
+// ... duplicated 20+ lines in every test
+
+// After: Reusable helper method
+await bookingHelper.navigateToBookingForm();
+```
+
+#### **3. Centralized Test Data**
+```typescript
+// Before: Hard-coded values
+await page.getByRole('button', { name: '01' }).first().click();
+
+// After: Centralized constants
+await reservationPage.selectDates(TestData.DATES.CHECK_IN, TestData.DATES.CHECK_OUT);
+```
+
+#### **4. AAA Pattern Implementation**
+```typescript
+// Arrange: Set up test data and objects
+const bookingHelper = new BookingFlowHelper(homePage, roomsPage, reservationPage, bookingFormPage);
+const validationData = TestData.EMPTY_EMAIL;
+
+// Act: Perform test actions  
+await bookingHelper.performValidationTest(validationData, expectedMessages, 'email-test');
+
+// Assert: Verify outcomes
+await bookingFormPage.verifyValidationAlert();
+```
 
