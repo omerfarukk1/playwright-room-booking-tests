@@ -4,28 +4,38 @@ This project contains automated UI tests for the room booking functionality on t
 
 ```
 typescript/
-├── package.json                 # Project dependencies and scripts
-├── playwright.config.ts        # Playwright configuration
-├── tsconfig.json              # TypeScript configuration
-├── index.ts                   # Main exports for easy imports
-├── pages/                     # Page Object Model classes
-│   ├── HomePage.ts           # Homepage interactions
-│   ├── RoomsPage.ts          # Room selection page
-│   ├── ReservationPage.ts    # Reservation and pricing page
-│   ├── BookingFormPage.ts    # Booking form interactions
-│   └── ConfirmationPage.ts   # Confirmation/error handling
-├── helpers/                   # Reusable test helpers
-│   └── BookingFlowHelper.ts  # Common booking flow actions
-├── data/                     # Test data management
-│   └── TestData.ts          # Centralized test data constants
-├── fixtures/                 # Test fixtures and setup
-│   └── test-fixtures.ts     # Page object fixtures
-├── tests/                    # Test files
-│   ├── room-booking.spec.ts          # Original tests
-│   └── room-booking-refactored.spec.ts # Best practices implementation
-├── test-results/             # Test execution artifacts
-├── playwright-report/        # HTML test reports
-└── README.md                 # This file
+├── package.json                     # Project dependencies and scripts
+├── playwright.config.ts            # Playwright configuration
+├── tsconfig.json                   # TypeScript configuration
+├── index.ts                       # Main exports for easy imports
+├── ARCHITECTURE.md               # Detailed architecture documentation
+├── config/                       # Configuration management
+│   └── TestConfig.ts            # Centralized configuration and constants
+├── pages/                        # Page Object Model classes
+│   ├── BasePage.ts              # Base class for all page objects
+│   ├── HomePage.ts              # Homepage interactions
+│   ├── RoomsPage.ts             # Room selection page
+│   ├── ReservationPage.ts       # Reservation and pricing page
+│   ├── BookingFormPage.ts       # Booking form interactions
+│   └── ConfirmationPage.ts      # Confirmation/error handling
+├── services/                     # Business logic and services
+│   └── ValidationService.ts     # Form validation business logic
+├── utils/                        # Utility classes and helpers
+│   ├── CustomErrors.ts          # Custom error classes
+│   └── PageUtils.ts             # Common UI interaction utilities
+├── helpers/                      # Reusable test helpers
+│   └── BookingFlowHelper.ts     # Common booking flow actions
+├── data/                        # Test data management
+│   └── TestData.ts             # Centralized test data constants
+├── fixtures/                    # Test fixtures and setup
+│   └── test-fixtures.ts        # Page object fixtures
+├── tests/                       # Test files
+│   ├── room-booking.spec.ts              # Original tests (legacy)
+│   ├── room-booking-refactored.spec.ts   # Best practices implementation
+│   └── room-booking-structured.spec.ts   # Structured implementation (latest)
+├── test-results/                # Test execution artifacts
+├── playwright-report/           # HTML test reports
+└── README.md                    # This file
 ```ng.online/) website using Playwright with TypeScript. The project follows modern testing best practices including Page Object Model (POM), DRY principles, and AAA (Arrange-Act-Assert) pattern.
 
 ## Project Overview
@@ -92,6 +102,20 @@ npx playwright test
 #### Run tests with visible browser (headed mode):
 ```bash
 npx playwright test --headed
+```
+
+#### Run structured tests (Latest Implementation - Best Readability):
+```bash
+# Run all structured tests with clear separation of concerns
+npx playwright test room-booking-structured.spec.ts
+
+# Run specific test groups
+npx playwright test room-booking-structured.spec.ts --grep "Complete Booking Workflow"
+npx playwright test room-booking-structured.spec.ts --grep "Form Validation Tests"
+npx playwright test room-booking-structured.spec.ts --grep "Pricing Verification"
+
+# Run with detailed step reporting
+npx playwright test room-booking-structured.spec.ts --project=chromium --headed --reporter=line
 ```
 
 #### Run refactored tests (Best Practices Implementation):
@@ -268,71 +292,253 @@ Tests will show one of these outcomes:
    npx playwright show-report
    ```
 
-##  Contributing
+## 🐛 Advanced Debugging Features
 
-1. Follow the existing code style and patterns
-2. Add appropriate wait conditions for dynamic content
-3. Include descriptive test names and comments
-4. Test across all supported browsers before submitting
+This project implements sophisticated debugging capabilities that go far beyond simple `console.log` statements:
 
-## 🎯 **Best Practices Improvements**
+### Debugging Tools Available
 
-### **Before vs After Comparison**
+#### 1. Playwright Trace Viewer
+- **Interactive trace analysis** with timeline view
+- **Visual step-by-step execution** tracking
+- **Network activity monitoring** and request analysis
+- **DOM snapshots** at each step
+- **Performance metrics** and timing analysis
 
-#### **🔴 Original Implementation Issues**
-- **No Page Object Model**: UI elements scattered throughout tests
-- **Code Duplication**: Repeated navigation and setup code
-- **Hard-coded Values**: Test data mixed with test logic  
-- **Poor Maintainability**: UI changes require multiple test updates
-- **Unclear Test Structure**: Missing AAA pattern organization
+```bash
+# Run tests with tracing
+npx playwright test --trace=on
 
-#### **✅ Refactored Implementation Benefits**
-- **Page Object Model**: Centralized UI element management
-- **DRY Principles**: Reusable helper classes and common flows
-- **Centralized Test Data**: Easy maintenance and updates
-- **Clear Architecture**: Separated concerns and modular design
-- **AAA Pattern**: Well-organized test structure
-- **Type Safety**: Full TypeScript implementation with interfaces
-
-### **Key Improvements**
-
-#### **1. Page Object Model Implementation**
-```typescript
-// Before: Direct page interactions in tests
-await page.getByRole('link', { name: /book now/i }).first().click();
-
-// After: Encapsulated in page objects
-await homePage.clickHeroBookNow();
+# View traces interactively
+npx playwright show-trace test-results/trace.zip
 ```
 
-#### **2. DRY Principles Application**
-```typescript
-// Before: Repeated navigation code in each test
-// ... duplicated 20+ lines in every test
+#### 2. VS Code Debugger Integration
+- **Native debugging support** with breakpoints
+- **Step-through execution** with variable inspection
+- **Interactive debugging sessions** with call stack analysis
+- **Debug configurations** for different scenarios
 
-// After: Reusable helper method
-await bookingHelper.navigateToBookingForm();
+```bash
+# Use F5 in VS Code or run:
+# "Debug Playwright Tests" configuration
 ```
 
-#### **3. Centralized Test Data**
-```typescript
-// Before: Hard-coded values
-await page.getByRole('button', { name: '01' }).first().click();
+#### 3. Enhanced Error Context Capture
+- **Automatic screenshot capture** on failures
+- **Full page HTML snapshots** for error analysis
+- **Browser console logs** collection
+- **Detailed error context** with page state
+- **Performance metrics** at error points
 
-// After: Centralized constants
-await reservationPage.selectDates(TestData.DATES.CHECK_IN, TestData.DATES.CHECK_OUT);
+#### 4. Debug Service Framework
+- **Comprehensive step tracking** with detailed reporting
+- **Performance monitoring** for all operations
+- **Centralized debug artifact management**
+- **Automatic debug report generation**
+- **Error context correlation**
+
+#### 5. Test.step() Organization
+- **Hierarchical test structure** for better reporting
+- **Step-by-step execution tracking** in HTML reports
+- **Clear test organization** with logical grouping
+- **Enhanced debugging granularity**
+
+### Quick Start Debugging
+
+#### Using Debug Toolkit Scripts
+```bash
+# Make script executable (first time only)
+chmod +x debug-toolkit.sh
+
+# Show all debugging options
+./debug-toolkit.sh help
+
+# Run in debug mode (headed, slow motion)
+./debug-toolkit.sh debug
+
+# Interactive debugging (step-by-step)
+./debug-toolkit.sh interactive
+
+# Full tracing mode
+./debug-toolkit.sh trace
+
+# Debug specific test
+./debug-toolkit.sh debug-test "Room Booking"
+
+# Code generation for element discovery
+./debug-toolkit.sh codegen
+
+# View traces
+./debug-toolkit.sh view-traces
+
+# View HTML reports
+./debug-toolkit.sh view-report
 ```
 
-#### **4. AAA Pattern Implementation**
+#### Using NPM Scripts
+```bash
+# Debug mode with headed browser
+npm run test:debug
+
+# Interactive step-by-step debugging
+npm run test:interactive
+
+# Full tracing with video/screenshots
+npm run test:trace
+
+# Headed mode for visual debugging
+npm run test:headed
+
+# View HTML reports
+npm run report
+
+# Code generation
+npm run codegen
+```
+
+#### Environment Variables
+```bash
+export DEBUG_MODE=true    # Enable comprehensive debugging
+export PWDEBUG=1         # Enable Playwright debug mode
+export HEADED=true       # Run in headed mode
+export SLOWMO=1000       # Slow motion delay (ms)
+```
+
+### Debug Output Examples
+
+#### Comprehensive Debug Reports
+```
+================================================================================
+📋 DEBUG REPORT: Room Booking Scenario - Advanced Debugging Demo
+================================================================================
+🎯 Test Result: ✅ PASSED
+⏱️  Total Duration: 14672ms
+📊 Total Steps: 9
+✅ Successful Steps: 9
+❌ Failed Steps: 0
+
+📝 Step Summary:
+   ✅ Step 1: Navigate to Homepage (1710ms)
+   ✅ Step 2: Click Hero Book Now (494ms)
+   ✅ Step 3: Select Available Room (2011ms)
+   ... detailed step breakdown ...
+```
+
+#### Step-by-Step Tracking
+```
+┌────────────────┬───────────────────────────────────────────────────────────────┐
+│ (index)        │ Values                                                        │
+├────────────────┼───────────────────────────────────────────────────────────────┤
+│ stepNumber     │ 1                                                             │
+│ description    │ 'Navigate to the room booking application homepage'           │
+│ action         │ 'page.goto("https://automationintesting.online/")'            │
+│ expectedResult │ 'Homepage should load successfully with hero section visible' │
+│ actualResult   │ 'Step completed successfully'                                 │
+│ duration       │ '1710ms'                                                      │
+│ pageUrl        │ 'https://automationintesting.online/'                         │
+│ success        │ '✅'                                                          │
+└────────────────┴───────────────────────────────────────────────────────────────┘
+```
+
+#### Performance Monitoring
+```
+📊 Page loaded in 1582.10ms
+🎯 Button text: "Book Now", Enabled: true
+💰 Pricing details: Room rate: £100, Cleaning: £25, Service: £15, Total: £140
+```
+
+#### Error Context Capture
+```
+🚨 Error: page.waitForSelector: Timeout 10000ms exceeded
+📸 Error Screenshot: test-results/debug/step-3-error.png
+📄 HTML Snapshot: test-results/debug/step-3-error.html
+🌐 Page URL: https://automationintesting.online/#booking
+📱 Viewport: 1280x720
+```
+
+### Debug Files and Artifacts
+
+#### Generated Debug Files
+- **Traces**: `test-results/trace.zip` - Interactive trace files
+- **Screenshots**: `test-results/screenshots/` - Step and error screenshots
+- **Videos**: `test-results/videos/` - Test execution recordings
+- **HTML Reports**: `playwright-report/index.html` - Comprehensive test reports
+- **Debug Reports**: `test-results/debug/` - Detailed debug information
+- **Error Context**: `test-results/error-context.md` - Error analysis files
+
+#### Trace Viewer Features
+- Timeline visualization of test execution
+- Action replay with visual feedback
+- Network tab for request analysis
+- Console output integration
+- DOM snapshot inspection
+- Performance metrics overlay
+
+### VS Code Debugging Setup
+
+#### Debug Configurations (`.vscode/launch.json`)
+- **Debug Playwright Tests**: Full debugging with breakpoints
+- **Debug Current Test File**: Debug the currently open test file
+- **Debug Specific Test**: Debug a test by name pattern
+- **Run Tests with Full Tracing**: Complete tracing and artifact collection
+
+#### Using VS Code Debugger
+1. Set breakpoints in your test code
+2. Press `F5` or use "Run and Debug" panel
+3. Select appropriate debug configuration
+4. Step through code with full variable inspection
+5. Use debug console for interactive evaluation
+
+### Best Practices for Debugging
+
+#### 1. Use test.step() for Organization
 ```typescript
-// Arrange: Set up test data and objects
-const bookingHelper = new BookingFlowHelper(homePage, roomsPage, reservationPage, bookingFormPage);
-const validationData = TestData.EMPTY_EMAIL;
+await test.step('User login process', async () => {
+  await test.step('Navigate to login page', async () => {
+    await page.goto('/login');
+  });
+  
+  await test.step('Enter credentials', async () => {
+    await page.fill('#username', 'user');
+    await page.fill('#password', 'pass');
+  });
+});
+```
 
-// Act: Perform test actions  
-await bookingHelper.performValidationTest(validationData, expectedMessages, 'email-test');
+#### 2. Implement Error Context Capture
+```typescript
+try {
+  await expect(element).toBeVisible();
+} catch (error) {
+  await page.screenshot({ path: 'debug-failure.png' });
+  const pageTitle = await page.title();
+  const currentUrl = page.url();
+  throw new Error(`Element not visible. Page: ${pageTitle}, URL: ${currentUrl}`);
+}
+```
 
-// Assert: Verify outcomes
-await bookingFormPage.verifyValidationAlert();
+#### 3. Use Performance Monitoring
+```typescript
+const { result, duration } = await measurePerformance('Page Load', async () => {
+  await page.goto('/complex-page');
+  return page.waitForLoadState('networkidle');
+});
+console.log(`Operation completed in ${duration.toFixed(2)}ms`);
+```
+
+#### 4. Leverage Browser Console Integration
+```typescript
+// Listen to browser console
+page.on('console', msg => {
+  if (msg.type() === 'error') {
+    console.log('Browser error:', msg.text());
+  }
+});
+
+// Evaluate in browser context
+const performanceData = await page.evaluate(() => {
+  return window.performance.timing;
+});
 ```
 

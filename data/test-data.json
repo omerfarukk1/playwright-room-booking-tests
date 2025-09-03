@@ -1,0 +1,286 @@
+{
+  "users": {
+    "validUser": {
+      "firstname": "John",
+      "lastname": "Doe",
+      "email": "john.doe@example.com",
+      "phone": "01234567890",
+      "title": "Mr",
+      "address": {
+        "street": "123 Test Street",
+        "city": "London",
+        "country": "UK",
+        "postcode": "SW1A 1AA"
+      }
+    },
+    "validUser2": {
+      "firstname": "Jane",
+      "lastname": "Smith",
+      "email": "jane.smith@example.com",
+      "phone": "09876543210",
+      "title": "Ms"
+    },
+    "specialCharacterUser": {
+      "firstname": "José",
+      "lastname": "García-López",
+      "email": "jose.garcia@example.com",
+      "phone": "+44-123-456-7890"
+    },
+    "minimumValidUser": {
+      "firstname": "Ann",
+      "lastname": "Lee",
+      "email": "a@b.co",
+      "phone": "12345678901"
+    },
+    "maximumValidUser": {
+      "firstname": "Maximillian-James",
+      "lastname": "Williamson-Smithington",
+      "email": "maximillian.james@very-long-domain-name.co.uk",
+      "phone": "123456789012345678901"
+    }
+  },
+  "invalidUsers": {
+    "emptyFirstname": {
+      "firstname": "",
+      "lastname": "Doe",
+      "email": "john.doe@example.com",
+      "phone": "01234567890"
+    },
+    "shortFirstname": {
+      "firstname": "Jo",
+      "lastname": "Doe",
+      "email": "john.doe@example.com",
+      "phone": "01234567890"
+    },
+    "longFirstname": {
+      "firstname": "ThisFirstnameIsTooLongForValidation",
+      "lastname": "Doe",
+      "email": "john.doe@example.com",
+      "phone": "01234567890"
+    },
+    "emptyLastname": {
+      "firstname": "John",
+      "lastname": "",
+      "email": "john.doe@example.com",
+      "phone": "01234567890"
+    },
+    "emptyEmail": {
+      "firstname": "John",
+      "lastname": "Doe",
+      "email": "",
+      "phone": "01234567890"
+    },
+    "invalidEmail": {
+      "firstname": "John",
+      "lastname": "Doe",
+      "email": "invalid-email",
+      "phone": "01234567890"
+    },
+    "shortPhone": {
+      "firstname": "John",
+      "lastname": "Doe",
+      "email": "john.doe@example.com",
+      "phone": "123"
+    },
+    "longPhone": {
+      "firstname": "John",
+      "lastname": "Doe",
+      "email": "john.doe@example.com",
+      "phone": "1234567890123456789012"
+    },
+    "allFieldsEmpty": {
+      "firstname": "",
+      "lastname": "",
+      "email": "",
+      "phone": ""
+    }
+  },
+  "bookings": {
+    "standardBooking": {
+      "checkInDate": "01",
+      "checkOutDate": "03",
+      "numberOfNights": 2,
+      "guestDetails": "validUser",
+      "roomType": "Single Room"
+    },
+    "weekendBooking": {
+      "checkInDate": "06",
+      "checkOutDate": "08",
+      "numberOfNights": 2,
+      "guestDetails": "validUser2",
+      "roomType": "Double Room"
+    },
+    "extendedStay": {
+      "checkInDate": "10",
+      "checkOutDate": "17",
+      "numberOfNights": 7,
+      "guestDetails": "specialCharacterUser",
+      "roomType": "Suite"
+    }
+  },
+  "rooms": {
+    "singleRoom": {
+      "type": "Single Room",
+      "price": 100,
+      "capacity": 2,
+      "features": ["TV", "WiFi", "Safe"],
+      "description": "Cozy single room perfect for solo travelers"
+    },
+    "doubleRoom": {
+      "type": "Double Room", 
+      "price": 150,
+      "capacity": 4,
+      "features": ["TV", "WiFi", "Safe", "Mini Bar"],
+      "description": "Spacious double room for couples or friends"
+    },
+    "suite": {
+      "type": "Suite",
+      "price": 250,
+      "capacity": 6,
+      "features": ["TV", "WiFi", "Safe", "Mini Bar", "Balcony", "Jacuzzi"],
+      "description": "Luxurious suite with premium amenities"
+    }
+  },
+  "pricing": {
+    "standardPricing": {
+      "cleaningFee": 25,
+      "serviceFee": 15,
+      "taxRate": 0.20
+    },
+    "singleRoomTotal": 140,
+    "doubleRoomTotal": 190,
+    "suiteTotal": 290
+  },
+  "dates": {
+    "currentMonth": {
+      "checkIn": "01",
+      "checkOut": "03",
+      "expectedRange": "2025-09-01 - 2025-09-02"
+    },
+    "nextMonth": {
+      "checkIn": "05",
+      "checkOut": "07",
+      "expectedRange": "2025-10-05 - 2025-10-06"
+    },
+    "sameDay": {
+      "checkIn": "15",
+      "checkOut": "15",
+      "expectedRange": "2025-09-15 - 2025-09-15"
+    }
+  },
+  "validation": {
+    "errorMessages": {
+      "firstname": {
+        "blank": "Firstname should not be blank",
+        "size": "size must be between 3 and 18"
+      },
+      "lastname": {
+        "blank": "Lastname should not be blank",
+        "size": "size must be between 3 and 30"
+      },
+      "email": {
+        "empty": "must not be empty",
+        "invalid": "must be a valid email address"
+      },
+      "phone": {
+        "size": "size must be between 11 and 21"
+      }
+    },
+    "testCases": [
+      {
+        "name": "Empty Firstname Validation",
+        "description": "Test validation when firstname is empty",
+        "formData": "emptyFirstname",
+        "expectedErrors": ["Firstname should not be blank", "size must be between 3 and 18"],
+        "testType": "single_field"
+      },
+      {
+        "name": "Empty Email Validation", 
+        "description": "Test validation when email is empty",
+        "formData": "emptyEmail",
+        "expectedErrors": ["must not be empty"],
+        "testType": "single_field"
+      },
+      {
+        "name": "All Fields Empty Validation",
+        "description": "Test validation when all fields are empty",
+        "formData": "allFieldsEmpty",
+        "expectedErrors": [
+          "Firstname should not be blank",
+          "size must be between 3 and 18", 
+          "Lastname should not be blank",
+          "must not be empty"
+        ],
+        "testType": "complete_form"
+      }
+    ]
+  },
+  "testScenarios": {
+    "endToEndBooking": {
+      "id": "e2e_001",
+      "name": "Complete Booking Flow",
+      "description": "Full end-to-end booking process with validation",
+      "category": "booking_flow",
+      "priority": "high",
+      "data": {
+        "user": "validUser",
+        "booking": "standardBooking",
+        "validation": "emptyFirstname"
+      },
+      "expectedOutcome": "success"
+    },
+    "emailValidation": {
+      "id": "val_001", 
+      "name": "Email Field Validation",
+      "description": "Validate email field error handling",
+      "category": "validation",
+      "priority": "high",
+      "data": {
+        "user": "emptyEmail",
+        "booking": "standardBooking"
+      },
+      "expectedOutcome": "validation_error"
+    },
+    "comprehensiveValidation": {
+      "id": "val_002",
+      "name": "All Fields Validation",
+      "description": "Comprehensive form validation testing",
+      "category": "validation", 
+      "priority": "medium",
+      "data": {
+        "user": "allFieldsEmpty",
+        "booking": "standardBooking"
+      },
+      "expectedOutcome": "validation_error"
+    },
+    "pricingVerification": {
+      "id": "pri_001",
+      "name": "Pricing Calculation",
+      "description": "Verify room pricing calculations",
+      "category": "pricing",
+      "priority": "high", 
+      "data": {
+        "booking": "standardBooking",
+        "room": "singleRoom"
+      },
+      "expectedOutcome": "success"
+    }
+  },
+  "environments": {
+    "production": {
+      "baseUrl": "https://automationintesting.online/",
+      "timeout": 10000,
+      "retries": 2
+    },
+    "staging": {
+      "baseUrl": "https://staging.automationintesting.online/",
+      "timeout": 15000, 
+      "retries": 3
+    },
+    "development": {
+      "baseUrl": "http://localhost:3000/",
+      "timeout": 30000,
+      "retries": 1
+    }
+  }
+}
